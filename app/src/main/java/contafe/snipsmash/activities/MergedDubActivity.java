@@ -7,18 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import contafe.snipsmash.R;
+import cz.msebera.android.httpclient.Header;
 
 public class MergedDubActivity extends AppCompatActivity {
 
@@ -53,28 +56,31 @@ public class MergedDubActivity extends AppCompatActivity {
     }
 
     private ArrayList<File> downloadUrls(ArrayList<String> urls) {
-        ArrayList<File> outputFiles = new ArrayList<>();
+        final ArrayList<File> outputFiles = new ArrayList<>();
         for (String urlString : urls) {
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
+            AsyncHttpClient dlSnip = new AsyncHttpClient();
+            dlSnip.get(
+                urlString,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        File outputFile = null;
+                        try {
+                            outputFile = File.createTempFile("soundFile", "aac", outputDir);
+                            FileOutputStream output = new FileOutputStream(outputFile);
+                            output.write(responseBody);
+                            outputFiles.add(outputFile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                InputStream input = connection.getInputStream();
-                File outputFile = File.createTempFile("soundFile", "aac", outputDir);
-                FileOutputStream output = new FileOutputStream(outputFile);
-
-                byte data[] = new byte[1024];
-                int count;
-                while ((count = input.read(data)) != -1) {
-                    output.write(data, 0, count);
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        System.err.println("I'm so sad now: " + statusCode);
+                    }
                 }
-                outputFiles.add(outputFile);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            );
         }
         return outputFiles;
     }
