@@ -17,6 +17,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import contafe.snipsmash.R;
 import contafe.snipsmash.adapters.SnipsAdapter;
@@ -53,8 +55,19 @@ public class SnipListActivity extends AppCompatActivity {
     }
 
     private void merge() {
+        List<SnipObject> snipsSelected = filterSelected();
 
+    }
+
+    private List<SnipObject> filterSelected() {
+        ArrayList<SnipObject> selected = new ArrayList<>(snips.size());
+
+        for (SnipObject snip : snips) {
+            if (snip.isSelected()) {
+                selected.add(snip);
+            }
         }
+        return selected;
     }
 
     protected void getFavouriteSnipList() {
