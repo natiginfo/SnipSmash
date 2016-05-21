@@ -7,21 +7,21 @@ import android.support.v7.widget.RecyclerView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import contafe.snipsmash.R;
 import contafe.snipsmash.adapters.SnipsAdapter;
-import contafe.snipsmash.models.SnipObject;
 import contafe.snipsmash.defaults.Constants;
 import contafe.snipsmash.defaults.TokenManager;
+import contafe.snipsmash.models.SnipObject;
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 public class SnipListActivity extends AppCompatActivity {
 
@@ -41,7 +41,6 @@ public class SnipListActivity extends AppCompatActivity {
 
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
-        JSONObject favSnipRequest = new JSONObject();
         TokenManager tokenManager = new TokenManager(this);
         AsyncHttpResponseHandler asyncHttpResponseHandler = new AsyncHttpResponseHandler() {
             @Override
@@ -77,23 +76,17 @@ public class SnipListActivity extends AppCompatActivity {
             }
         };
 
-        try {
-            favSnipRequest.put("Authorization", "Bearer " + tokenManager.getAccessToken());
+        ArrayList<Header> headers = new ArrayList<>();
+        headers.add(new BasicHeader("Authorization", "Bearer " + tokenManager.getAccessToken()));
+        headers.add(new BasicHeader("Content-Type", "application/json"));
 
-            StringEntity entity = new StringEntity(favSnipRequest.toString());
-
-            favSnipClient.get(
-                SnipListActivity.this,
-                Constants.API_URL + Constants.FAV_SNIPS,
-                entity,
-                "application/json",
-                asyncHttpResponseHandler
-            );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        favSnipClient.get(
+            SnipListActivity.this,
+            Constants.API_URL + Constants.FAV_SNIPS,
+            (Header[]) headers.toArray(),
+            new RequestParams(),
+            asyncHttpResponseHandler
+        );
 
     }
 
