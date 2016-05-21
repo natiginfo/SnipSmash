@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SnipListActivity"></activity>
+        <activity android:name=".activities.MergedDubActivity"></activity>
     </application>
 
 </manifest>
