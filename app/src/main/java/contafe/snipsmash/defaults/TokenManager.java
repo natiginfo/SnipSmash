@@ -24,6 +24,18 @@ public class TokenManager {
         this.accessToken = accessToken;
     }
 
+    public String getAccessToken() {
+        SharedPreferences myPrefs = context.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String token1 = myPrefs.getString("accessToken", "empty");
+        return token1;
+    }
+
+    public String getRefreshToken() {
+        SharedPreferences myPrefs = context.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String token1 = myPrefs.getString("refreshToken", "empty");
+        return token1;
+    }
+
     public void updateRefreshToken(String newToken) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
         editor.putString("refreshToken", newToken);
