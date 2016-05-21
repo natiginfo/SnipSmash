@@ -20,12 +20,11 @@ import contafe.snipsmash.models.SnipObject;
  * Created by Natig on 11/8/15.
  */
 
-public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
+public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder> {
     private List<SnipObject> snips;
-    public MediaPlayer mp ;
+    public MediaPlayer mp = new MediaPlayer();
 
-    public SnipsAdapter(List<SnipObject> snips)
-    {
+    public SnipsAdapter(List<SnipObject> snips) {
         this.snips = snips;
     }
 
@@ -36,6 +35,14 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
         ViewHolder viewHolder = new ViewHolder(itemLayoutView);
 
         return viewHolder;
+    }
+
+    private void stopPlaying() {
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+        }
     }
 
     @Override
@@ -50,11 +57,9 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
         viewHolder.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mp.isPlaying()){
-                    mp.release();
-                    mp.stop();
-                }
+                stopPlaying();
                 try {
+                    mp = new MediaPlayer();
                     mp.setDataSource(getSnips().get(pos).getUrlAAC());
                     mp.prepare();
                     mp.start();
@@ -85,6 +90,7 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
     public int getItemCount() {
         return snips.size();
     }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView categoryName;
@@ -102,6 +108,7 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
         }
 
     }
+
     // method to access in activity after updating selection
     public List<SnipObject> getSnips() {
         return snips;
