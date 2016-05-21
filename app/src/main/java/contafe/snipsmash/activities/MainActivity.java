@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 
 import contafe.snipsmash.R;
 import contafe.snipsmash.defaults.Constants;
+import contafe.snipsmash.defaults.InternetDetector;
 import contafe.snipsmash.defaults.TokenManager;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final InternetDetector internetDetector = new InternetDetector(this);
+
         loginProgress = (ProgressBar) findViewById(R.id.loginProgressBar);
         loginButton = (Button) findViewById(R.id.loginButton);
         usernameET = (EditText) findViewById(R.id.usernameEditText);
@@ -46,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mp.start();
-                login();
+                if (internetDetector.isConnectiongToInternet()) {
+                    login();
+                } else {
+                    Toast.makeText(MainActivity.this, "You don't have an internet connection now. Try again.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
