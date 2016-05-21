@@ -138,13 +138,14 @@ public class MergedDubActivity extends AppCompatActivity {
     private void installFFMpeg() {
         Context ctx = this.getApplicationContext();
         try {
-            File f = new File(ctx.getDir("bin", 0), "ffmpeg");
+            File f = new File(outputDir.getAbsolutePath(), "ffmpeg");
 
             final FileOutputStream out = new FileOutputStream(f);
             final InputStream is = ctx.getResources().openRawResource(R.raw.ffmpeg);
             byte buf[] = new byte[1024];
             int len;
             while ((len = is.read(buf)) > 0) {
+                System.out.println("Writing bufferssss!!!");
                 out.write(buf, 0, len);
             }
             ffmpegBinary = f.getAbsolutePath();
