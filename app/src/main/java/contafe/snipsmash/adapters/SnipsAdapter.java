@@ -1,24 +1,5 @@
 package contafe.snipsmash.adapters;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
-
-import java.util.List;
-
-import contafe.snipsmash.R;
-
-/**
- * Created by Natig on 5/21/16.
- */
-public class SnipsAdapter {
-}
-
-/*
-package az.tipster.adapter;
-
 import java.util.List;
 
 import android.support.v7.widget.RecyclerView;
@@ -33,24 +14,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import az.tipster.R;
-import az.tipster.model.Category;
+import contafe.snipsmash.R;
+import contafe.snipsmash.models.SnipObject;
 
 /**
  * Created by Natig on 11/8/15.
  */
-/*
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
-    private List<Category> ctgList; //categoryList
 
-    public CategoriesAdapter(List<Category> categories)
+public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
+    private List<SnipObject> snips;
+
+    public SnipsAdapter(List<SnipObject> snips)
     {
-        this.ctgList = categories;
+        this.snips = snips;
     }
 
     // Create new views
     @Override
-    public CategoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SnipsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_filter_row, null);
         ViewHolder viewHolder = new ViewHolder(itemLayoutView);
 
@@ -62,20 +43,19 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         final int pos = position;
 
-        viewHolder.categoryName.setText(ctgList.get(position).getCategoryName());
+        viewHolder.categoryName.setText(snips.get(position).getName());
 
-        viewHolder.chkSelected.setChecked(ctgList.get(position).isSelected());
+        viewHolder.chkSelected.setChecked(snips.get(position).isSelected());
 
-        viewHolder.chkSelected.setTag(ctgList.get(position));
-
+        viewHolder.chkSelected.setTag(snips.get(position));
 
         viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 CheckBox cb = (CheckBox) v;
-                Category category = (Category) cb.getTag();
+                SnipObject snip = (SnipObject) cb.getTag();
 
-                category.setSelected(cb.isChecked());
-                ctgList.get(pos).setSelected(cb.isChecked());
+                snip.setSelected(cb.isChecked());
+                snips.get(pos).setSelected(cb.isChecked());
 
 //                Toast.makeText(
 //                        v.getContext(), "Clicked on Checkbox: " + cb.getText() + " is " + cb.isChecked(), Toast.LENGTH_LONG).show();
@@ -87,14 +67,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     // Return the size arraylist
     @Override
     public int getItemCount() {
-        return ctgList.size();
+        return snips.size();
     }
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView categoryName;
         public CheckBox chkSelected;
 
-        public Category singleCategory;
+        public SnipObject snip;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -105,9 +85,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     }
     // method to access in activity after updating selection
-    public List<Category> getCategoryList() {
-        return ctgList;
+    public List<SnipObject> getCategoryList() {
+        return snips;
     }
 }
-
- */

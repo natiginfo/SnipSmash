@@ -9,10 +9,8 @@ public class SnipObject {
 
     private String updatedAt;
     private String wafeformData;
-    private String creatorUserName;
-    private String creatorDisplayName;
     private String urlAAC;
-    private ArrayList<String> culturalSelections;
+    private Boolean isSelected;
     private String slug;
     private String name;
     private String url;
@@ -34,6 +32,7 @@ public class SnipObject {
         this.name = name;
         this.url = url;
         this.waveform640x128 = waveform640x128;
+        this.isSelected = false;
     }
 
     public String getUpdatedAt() {
@@ -90,6 +89,14 @@ public class SnipObject {
 
     public void setWaveform640x128(String waveform640x128) {
         this.waveform640x128 = waveform640x128;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    public boolean isSelected() {
+        return this.isSelected;
     }
 }
 
