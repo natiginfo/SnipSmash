@@ -1,5 +1,6 @@
 package contafe.snipsmash.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +42,7 @@ public class SnipListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_snip_list);
         snipView = (RecyclerView) findViewById(R.id.recyclerView);
         snipView.setHasFixedSize(true);
-        snips = new ArrayList<>();
+        snips = new ArrayList<SnipObject>();
 
         getFavouriteSnipList();
         mergeButton = (Button) findViewById(R.id.buttonMerge);
@@ -54,21 +55,27 @@ public class SnipListActivity extends AppCompatActivity {
     }
 
     private void merge() {
-        List<SnipObject> snipsSelected = filterSelected();
-
+        List<String> snipsSelected = filterSelected();
+        JSONArray array = new JSONArray(snipsSelected);
+        sendAnotherActivity(array);
     }
 
-    private List<SnipObject> filterSelected() {
-        ArrayList<SnipObject> selected = new ArrayList<>(snips.size());
+    private void sendAnotherActivity(JSONArray array) {
+        Intent intent = new Intent(SnipListActivity.this, MainActivity.class);
+        intent.putExtra("data", array.toString());
+        startActivity(intent);
+    }
+
+    private List<String> filterSelected() {
+        ArrayList<String> selected = new ArrayList<>(snips.size());
 
         for (SnipObject snip : snips) {
             if (snip.isSelected()) {
-                selected.add(snip);
+                selected.add(snip.getUrlAAC());
             }
         }
         return selected;
     }
-
 
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
