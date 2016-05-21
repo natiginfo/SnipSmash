@@ -73,12 +73,12 @@ public class SnipListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                System.out.println("Waaahhh....!");
+                System.out.println(String.valueOf(statusCode) + ": " + new String(responseBody) + " with headers: " + headers.toString());
             }
         };
 
         try {
-            favSnipRequest.put("token", tokenManager.getAccessToken());
+            favSnipRequest.put("Authorization", "Bearer " + tokenManager.getAccessToken());
 
             StringEntity entity = new StringEntity(favSnipRequest.toString());
 
