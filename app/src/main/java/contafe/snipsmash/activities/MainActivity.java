@@ -5,14 +5,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 import contafe.snipsmash.R;
 import contafe.snipsmash.defaults.Constants;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loginButton = (Button) findViewById(R.id.loginButton);
+        usernameET = (EditText) findViewById(R.id.usernameEditText);
+        passwordET = (EditText) findViewById(R.id.passwordEditText);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,11 +61,33 @@ public class MainActivity extends AppCompatActivity {
             loginDetails.put("grant_type", "password");
             loginDetails.put("client_id", Constants.CLIENT_ID);
             loginDetails.put("client_secret", Constants.CLIENT_SECRET);
+
+            StringEntity entity = new StringEntity(loginDetails.toString());
+
+            loginClient.post(MainActivity.this, Constants.API_URL + "/me/login", entity, "application/json", new AsyncHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    //posting started
+
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String response = new String(responseBody);
+                    System.out.println("RESPONSE: " + response);
+//                    Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    String response = new String(responseBody);
+                    System.out.println("ERROR RESPONSE: " + responseBody);
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-
-
-
     }
 }
