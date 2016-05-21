@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import contafe.snipsmash.R;
 import contafe.snipsmash.SnipObject;
 import contafe.snipsmash.defaults.Constants;
+import contafe.snipsmash.defaults.TokenManager;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
@@ -34,6 +35,7 @@ public class SnipListActivity extends AppCompatActivity {
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
         JSONObject favSnipRequest = new JSONObject();
+        TokenManager tokenManager = new TokenManager(this);
         AsyncHttpResponseHandler asyncHttpResponseHandler = new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -66,7 +68,7 @@ public class SnipListActivity extends AppCompatActivity {
         };
 
         try {
-            favSnipRequest.put("token", "INSERT_TOKEN_HERE");
+            favSnipRequest.put("token", tokenManager.getAccessToken());
 
             StringEntity entity = new StringEntity(favSnipRequest.toString());
 
