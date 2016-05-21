@@ -45,6 +45,9 @@ public class MergedDubActivity extends AppCompatActivity {
         Handler handler = new Handler();
 
         outputDir = this.getApplicationContext().getCacheDir();
+        if (!outputDir.exists()) {
+            System.err.println("THE CACHE DIR DOESN'T EXIST!!!");
+        }
 
         counter = 0;
         numUrls = urls.size();
@@ -147,14 +150,16 @@ public class MergedDubActivity extends AppCompatActivity {
             ffmpegBinary = f.getAbsolutePath();
             Runtime.getRuntime().exec("chmod 755 "+ffmpegBinary).waitFor();
         } catch (FileNotFoundException e) {
+            System.err.println("OH MY GOD NOOOOO, WE CAN'T FIND THE FILE.");
             e.printStackTrace();
         } catch (IOException e) {
+            System.err.println("OH MY GOD NOOOOO, WE Have an IOException.");
             e.printStackTrace();
         } catch (InterruptedException e) {
+            System.err.println("OH MY GOD NOOOOO, WE are interrupted.");
             e.printStackTrace();
         }
     }
-
 
     private class MergeWithFFMpegException extends Throwable {
     }
