@@ -48,9 +48,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showProgress() {
+        loginButton.setVisibility(View.GONE);
+        loginProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void dismissProgress() {
+        loginButton.setVisibility(View.VISIBLE);
+        loginProgress.setVisibility(View.GONE);
+    }
+
     private void login() {
         final TokenManager tokenManager = new TokenManager(this);
         tokenManager.cleanTokens();
+
         System.out.println("LOGGED IN: " + tokenManager.isLoggedIn());
         AsyncHttpClient loginClient = new AsyncHttpClient();
         JSONObject loginDetails = new JSONObject();
@@ -67,13 +78,13 @@ public class MainActivity extends AppCompatActivity {
             loginClient.post(MainActivity.this, Constants.API_URL + "/me/login", entity, "application/json", new AsyncHttpResponseHandler() {
                 @Override
                 public void onStart() {
-                    loginProgress.setVisibility(View.VISIBLE);
+                    showProgress();
                 }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
-                    loginProgress.setVisibility(View.GONE);
+                    dismissProgress();
 
                     String response = new String(responseBody);
 
@@ -88,7 +99,13 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("LOGGED IN: " + tokenManager.isLoggedIn());
 
                             Intent intent = new Intent(MainActivity.this, SnipListActivity.class);
+
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             startActivity(intent);
+                            finish();
+
                         } else {
                             Toast.makeText(MainActivity.this, jsonResponse.getString("error_description"), Toast.LENGTH_LONG).show();
                         }
@@ -99,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    loginProgress.setVisibility(View.GONE);
+
+                    dismissProgress();
+
                     Toast.makeText(MainActivity.this, "Something went wrong. Please retry again.", Toast.LENGTH_SHORT).show();
                     String response = new String(responseBody);
                     System.out.println("ERROR RESPONSE: " + responseBody);
