@@ -1,18 +1,13 @@
 package contafe.snipsmash.adapters;
 
-import java.util.List;
-
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import java.util.List;
 
 import contafe.snipsmash.R;
 import contafe.snipsmash.models.SnipObject;
@@ -32,7 +27,7 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
     // Create new views
     @Override
     public SnipsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_filter_row, null);
+        View itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_snip, null);
         ViewHolder viewHolder = new ViewHolder(itemLayoutView);
 
         return viewHolder;
@@ -79,13 +74,13 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
 
-            categoryName = (TextView) itemLayoutView.findViewById(R.id.categoryName);
+            categoryName = (TextView) itemLayoutView.findViewById(R.id.snipName);
             chkSelected = (CheckBox) itemLayoutView.findViewById(R.id.checkSelected);
         }
 
     }
     // method to access in activity after updating selection
-    public List<SnipObject> getCategoryList() {
+    public List<SnipObject> getSnips() {
         return snips;
     }
 }
