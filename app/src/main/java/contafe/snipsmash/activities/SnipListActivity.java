@@ -54,8 +54,8 @@ public class SnipListActivity extends AppCompatActivity {
 
     private void merge() {
 
-        }
     }
+
 
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
@@ -107,6 +107,4 @@ public class SnipListActivity extends AppCompatActivity {
         );
 
     }
-
-
 }
