@@ -3,6 +3,7 @@ package contafe.snipsmash.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
@@ -15,9 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import contafe.snipsmash.R;
@@ -31,6 +29,8 @@ public class MergedDubActivity extends AppCompatActivity {
 
     private String ffmpegBinary;
     private File outputDir;
+    Integer counter;
+    Integer numUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +40,36 @@ public class MergedDubActivity extends AppCompatActivity {
         snipView.setHasFixedSize(true);
         Intent intent = getIntent();
         ArrayList<String> urls = intent.getStringArrayListExtra("data");
-        System.out.println("BLABLA + " + urls.size());
         playButton = (Button) findViewById(R.id.playButton);
         saveButton = (Button) findViewById(R.id.saveButton);
+        Handler handler = new Handler();
 
-        ArrayList<File> aacFiles = downloadUrls(urls);
-        try {
-            File outputFile = mergeWithFFMpeg(aacFiles);
-        } catch (MergeWithFFMpegException e) {
-            System.err.println("We got a boo-boo!!! :( " + e.getMessage());
-            e.printStackTrace();
-        }
+
+        counter = 0;
+        numUrls = urls.size();
+        final ArrayList<File> aacFiles = downloadUrls(urls);
+        final File[] outputFiles = new File[1];
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    outputFiles[0] = mergeWithFFMpeg(aacFiles);
+                } catch (MergeWithFFMpegException e) {
+                    System.err.println("We got a boo-boo!!! :( " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }, 3000);
+
         outputDir = this.getApplicationContext().getCacheDir();
+        File outputFile = outputFiles[0];
 
     }
 
     private ArrayList<File> downloadUrls(ArrayList<String> urls) {
         final ArrayList<File> outputFiles = new ArrayList<>();
         for (String urlString : urls) {
+
             AsyncHttpClient dlSnip = new AsyncHttpClient();
             dlSnip.get(
                 urlString,
@@ -66,10 +78,12 @@ public class MergedDubActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         File outputFile = null;
                         try {
-                            outputFile = File.createTempFile("soundFile", "aac", outputDir);
+                            outputFile = File.createTempFile("soundFile", ".aac", outputDir);
                             FileOutputStream output = new FileOutputStream(outputFile);
                             output.write(responseBody);
                             outputFiles.add(outputFile);
+                            counter++;
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -91,12 +105,12 @@ public class MergedDubActivity extends AppCompatActivity {
         }
 
         try {
-            File listOfFiles = File.createTempFile("inputFile", "txt", outputDir);
+            File listOfFiles = File.createTempFile("inputFile", ".txt", outputDir);
             FileOutputStream listOfFileOut = new FileOutputStream(listOfFiles);
             for (File aacFile : aacFiles) {
                 listOfFileOut.write(aacFile.getAbsolutePath().getBytes());
             }
-            File outputAacFile = File.createTempFile("merged", "aac", outputDir);
+            File outputAacFile = File.createTempFile("merged", ".aac", outputDir);
             String command = ffmpegBinary + " -f concat -i " + listOfFiles.getAbsolutePath() + " -c copy " + outputAacFile.getAbsolutePath();
 
             ProcessBuilder pb = new ProcessBuilder(command);
