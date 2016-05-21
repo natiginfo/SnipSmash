@@ -12,6 +12,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class SnipListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_snip_list);
         snipView = (RecyclerView) findViewById(R.id.recyclerView);
         snipView.setHasFixedSize(true);
+        snips = new ArrayList<>();
 
         getFavouriteSnipList();
     }
@@ -46,7 +48,7 @@ public class SnipListActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 try {
-                    JSONArray favSnipList = new JSONArray(new String(responseBody));
+                    JSONArray favSnipList = new JSONArray(new JSONTokener(new String(responseBody)));
                     for (int i = 0; i < favSnipList.length(); i++) {
                         JSONObject snipJSON = favSnipList.getJSONObject(i);
                         SnipObject snip = new SnipObject(
@@ -65,7 +67,7 @@ public class SnipListActivity extends AppCompatActivity {
                     snipView.setAdapter(snipsAdapter);
                     snipsAdapter.notifyDataSetChanged();
                 } catch (JSONException e) {
-                    System.out.println("The response JSON doesn't work.");
+                    System.out.println("The response JSON doesn't work: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -76,14 +78,14 @@ public class SnipListActivity extends AppCompatActivity {
             }
         };
 
-        ArrayList<Header> headers = new ArrayList<>();
-        headers.add(new BasicHeader("Authorization", "Bearer " + tokenManager.getAccessToken()));
-        headers.add(new BasicHeader("Content-Type", "application/json"));
+        Header[] headers = new Header[2];
+        headers[0] = new BasicHeader("Authorization", "Bearer " + tokenManager.getAccessToken());
+        headers[1] = new BasicHeader("Content-Type", "application/json");
 
         favSnipClient.get(
             SnipListActivity.this,
             Constants.API_URL + Constants.FAV_SNIPS,
-            (Header[]) headers.toArray(),
+            headers,
             new RequestParams(),
             asyncHttpResponseHandler
         );
