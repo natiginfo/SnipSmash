@@ -26,10 +26,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:text="snipsmash"
             android:hint="Username"
             android:inputType="textPersonName" />
 
         <EditText
+            android:text="weloveunicorns"
             android:id="@+id/passwordEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
