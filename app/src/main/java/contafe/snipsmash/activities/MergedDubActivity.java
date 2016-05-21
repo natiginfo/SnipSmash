@@ -51,6 +51,8 @@ public class MergedDubActivity extends AppCompatActivity {
 
         counter = 0;
         numUrls = urls.size();
+        installFFMpeg();
+
         final ArrayList<File> aacFiles = downloadUrls(urls);
         final File[] outputFiles = new File[1];
         handler.postDelayed(new Runnable() {
@@ -103,8 +105,6 @@ public class MergedDubActivity extends AppCompatActivity {
     }
 
     private File mergeWithFFMpeg(ArrayList<File> aacFiles) throws MergeWithFFMpegException {
-        installFFMpeg();
-
         try {
             File listOfFiles = File.createTempFile("inputFile", ".txt", outputDir);
             FileOutputStream listOfFileOut = new FileOutputStream(listOfFiles);
