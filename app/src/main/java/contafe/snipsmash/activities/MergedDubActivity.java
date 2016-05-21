@@ -44,6 +44,7 @@ public class MergedDubActivity extends AppCompatActivity {
         saveButton = (Button) findViewById(R.id.saveButton);
         Handler handler = new Handler();
 
+        outputDir = this.getApplicationContext().getCacheDir();
 
         counter = 0;
         numUrls = urls.size();
@@ -61,7 +62,6 @@ public class MergedDubActivity extends AppCompatActivity {
             }
         }, 3000);
 
-        outputDir = this.getApplicationContext().getCacheDir();
         File outputFile = outputFiles[0];
 
     }
@@ -100,9 +100,7 @@ public class MergedDubActivity extends AppCompatActivity {
     }
 
     private File mergeWithFFMpeg(ArrayList<File> aacFiles) throws MergeWithFFMpegException {
-        if (ffmpegBinary == null) {
-            installFFMpeg();
-        }
+        installFFMpeg();
 
         try {
             File listOfFiles = File.createTempFile("inputFile", ".txt", outputDir);
