@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void login() {
         final TokenManager tokenManager = new TokenManager(this);
+        tokenManager.cleanTokens();
         System.out.println("LOGGED IN: " + tokenManager.isLoggedIn());
         AsyncHttpClient loginClient = new AsyncHttpClient();
         JSONObject loginDetails = new JSONObject();
