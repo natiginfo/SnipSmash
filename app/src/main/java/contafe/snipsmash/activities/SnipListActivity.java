@@ -55,20 +55,14 @@ public class SnipListActivity extends AppCompatActivity {
     }
 
     private void merge() {
-        List<String> snipsSelected = filterSelected();
-        JSONArray array = new JSONArray(snipsSelected);
-        sendAnotherActivity(array);
-    }
-
-    private void sendAnotherActivity(JSONArray array) {
-        Intent intent = new Intent(SnipListActivity.this, MainActivity.class);
-        intent.putExtra("data", array.toString());
+        Intent intent = new Intent(SnipListActivity.this, MergedDubActivity.class);
+        intent.putExtra("data", filterSelected());
         startActivity(intent);
     }
 
-    private List<String> filterSelected() {
-        ArrayList<String> selected = new ArrayList<>(snips.size());
 
+    private ArrayList<String> filterSelected() {
+        ArrayList<String> selected = new ArrayList<>(snips.size());
         for (SnipObject snip : snips) {
             if (snip.isSelected()) {
                 selected.add(snip.getUrlAAC());
