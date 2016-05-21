@@ -16,6 +16,14 @@ public class TokenManager {
         this.context = context;
     }
 
+    public void cleanTokens()
+    {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences.edit().remove("refreshToken").commit();
+        sharedPreferences.edit().remove("accessToken").commit();
+
+    }
+
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
