@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 import contafe.snipsmash.R;
 import contafe.snipsmash.defaults.Constants;
+import contafe.snipsmash.defaults.TokenManager;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
@@ -44,14 +45,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login() {
-        /*
-          "username": "snipsmash",
-  "password": "weloveunicorns",
-  "grant_type": "password",
-  "client_id": "rM7gvdLe6K5ZH6QC5pWWVUcHWZQYj4B3tiZyl488",
-  "client_secret": "7hNoi8DxEQ03keLq6Fg4Aqya5noTEg3VlfM6OsPzgt1imchkLTKafjKV6RXfALfEfYd77fpIxHC9m2WSqasQFqld6iwZUK3pyZF3ywVA6PxCYHcf16ugfi3BRxHkhLW3"
-}
-         */
+        final TokenManager tokenManager = new TokenManager(this);
+        System.out.println("LOGGED IN: " + tokenManager.isLoggedIn());
         AsyncHttpClient loginClient = new AsyncHttpClient();
         JSONObject loginDetails = new JSONObject();
 
@@ -68,14 +63,23 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onStart() {
                     //posting started
-
                 }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String response = new String(responseBody);
-                    System.out.println("RESPONSE: " + response);
-//                    Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+
+                        tokenManager.setAccessToken(jsonResponse.getString("access_token"));
+                        tokenManager.setRefreshToken(jsonResponse.getString("refresh_token"));
+                        tokenManager.save();
+
+                        System.out.println("RESPONSE: " + jsonResponse.toString());
+                        System.out.println("LOGGED IN: " + tokenManager.isLoggedIn());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
