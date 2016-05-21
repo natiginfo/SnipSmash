@@ -69,7 +69,6 @@ public class SnipListActivity extends AppCompatActivity {
         return selected;
     }
 
-
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
         TokenManager tokenManager = new TokenManager(this);
