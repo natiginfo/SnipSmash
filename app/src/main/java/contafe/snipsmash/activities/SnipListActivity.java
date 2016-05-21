@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import contafe.snipsmash.R;
@@ -70,6 +69,7 @@ public class SnipListActivity extends AppCompatActivity {
         return selected;
     }
 
+
     protected void getFavouriteSnipList() {
         AsyncHttpClient favSnipClient = new AsyncHttpClient();
         TokenManager tokenManager = new TokenManager(this);
@@ -120,6 +120,4 @@ public class SnipListActivity extends AppCompatActivity {
         );
 
     }
-
-
 }
