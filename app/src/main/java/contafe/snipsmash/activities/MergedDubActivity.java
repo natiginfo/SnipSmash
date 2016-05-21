@@ -1,11 +1,21 @@
 package contafe.snipsmash.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import contafe.snipsmash.R;
@@ -15,6 +25,9 @@ public class MergedDubActivity extends AppCompatActivity {
     private RecyclerView snipView;
     private Button playButton;
     private Button saveButton;
+
+    private String ffmpegBinary;
+    private File outputDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +41,100 @@ public class MergedDubActivity extends AppCompatActivity {
         playButton = (Button) findViewById(R.id.playButton);
         saveButton = (Button) findViewById(R.id.saveButton);
 
+        ArrayList<File> aacFiles = downloadUrls(urls);
+        try {
+            File outputFile = mergeWithFFMpeg(aacFiles);
+        } catch (MergeWithFFMpegException e) {
+            System.err.println("We got a boo-boo!!! :( " + e.getMessage());
+            e.printStackTrace();
+        }
+        outputDir = this.getApplicationContext().getCacheDir();
+
     }
 
+    private ArrayList<File> downloadUrls(ArrayList<String> urls) {
+        ArrayList<File> outputFiles = new ArrayList<>();
+        for (String urlString : urls) {
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream input = connection.getInputStream();
+                File outputFile = File.createTempFile("soundFile", "aac", outputDir);
+                FileOutputStream output = new FileOutputStream(outputFile);
+
+                byte data[] = new byte[1024];
+                int count;
+                while ((count = input.read(data)) != -1) {
+                    output.write(data, 0, count);
+                }
+                outputFiles.add(outputFile);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return outputFiles;
+    }
+
+    private File mergeWithFFMpeg(ArrayList<File> aacFiles) throws MergeWithFFMpegException {
+        if (ffmpegBinary == null) {
+            installFFMpeg();
+        }
+
+        try {
+            File listOfFiles = File.createTempFile("inputFile", "txt", outputDir);
+            FileOutputStream listOfFileOut = new FileOutputStream(listOfFiles);
+            for (File aacFile : aacFiles) {
+                listOfFileOut.write(aacFile.getAbsolutePath().getBytes());
+            }
+            File outputAacFile = File.createTempFile("merged", "aac", outputDir);
+            String command = ffmpegBinary + " -f concat -i " + listOfFiles.getAbsolutePath() + " -c copy " + outputAacFile.getAbsolutePath();
+
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(outputDir);
+
+            Process proc = pb.start();
+
+            int exitVal = proc.waitFor();
+
+            System.out.println("Exit val is: " + String.valueOf(exitVal));
+
+            return outputAacFile;
+        } catch (IOException e) {
+            System.err.println("I'm sad: " + e.getMessage());
+            e.printStackTrace();
+            throw(new MergeWithFFMpegException());
+        } catch (InterruptedException e) {
+            System.err.println("I'm super sad: " + e.getMessage());
+            e.printStackTrace();
+            throw(new MergeWithFFMpegException());
+        }
+    }
+
+    private void installFFMpeg() {
+        Context ctx = this.getApplicationContext();
+        try {
+            File f = new File(ctx.getDir("bin", 0), "ffmpeg");
+
+            final FileOutputStream out = new FileOutputStream(f);
+            final InputStream is = ctx.getResources().openRawResource(R.raw.ffmpeg);
+            byte buf[] = new byte[1024];
+            int len;
+            while ((len = is.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            ffmpegBinary = f.getAbsolutePath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private class MergeWithFFMpegException extends Throwable {
+    }
 }
