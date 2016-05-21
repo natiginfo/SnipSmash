@@ -147,9 +147,12 @@ public class MergedDubActivity extends AppCompatActivity {
                 out.write(buf, 0, len);
             }
             ffmpegBinary = f.getAbsolutePath();
+            Runtime.getRuntime().exec("chmod 755 "+ffmpegBinary).waitFor();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
