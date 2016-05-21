@@ -13,15 +13,16 @@
 
     <EditText
         android:id="@+id/usernameEditText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="Username" />
 
     <EditText
         android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:ems="10"
