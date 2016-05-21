@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mp.start();
                 if (internetDetector.isConnectiongToInternet()) {
                     login();
+                    mp.start();
                 } else {
                     Toast.makeText(MainActivity.this, "You don't have an internet connection now. Try again.", Toast.LENGTH_SHORT).show();
                 }

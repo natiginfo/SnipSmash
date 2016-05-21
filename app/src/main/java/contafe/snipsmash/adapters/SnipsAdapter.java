@@ -1,12 +1,16 @@
 package contafe.snipsmash.adapters;
 
+import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 import contafe.snipsmash.R;
@@ -18,6 +22,7 @@ import contafe.snipsmash.models.SnipObject;
 
 public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
     private List<SnipObject> snips;
+    public MediaPlayer mp ;
 
     public SnipsAdapter(List<SnipObject> snips)
     {
@@ -39,10 +44,26 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
         final int pos = position;
 
         viewHolder.categoryName.setText(snips.get(position).getName());
-
         viewHolder.chkSelected.setChecked(snips.get(position).isSelected());
-
         viewHolder.chkSelected.setTag(snips.get(position));
+
+        viewHolder.playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mp.isPlaying()){
+                    mp.release();
+                    mp.stop();
+                }
+                try {
+                    mp.setDataSource(getSnips().get(pos).getUrlAAC());
+                    mp.prepare();
+                    mp.start();
+                } catch (IOException e) {
+                    Toast.makeText(v.getContext(), "ERROR_WHILE_PLAYING:" + e, Toast.LENGTH_LONG);
+                }
+
+            }
+        });
 
         viewHolder.chkSelected.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -68,7 +89,7 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
 
         public TextView categoryName;
         public CheckBox chkSelected;
-
+        public ImageButton playButton;
         public SnipObject snip;
 
         public ViewHolder(View itemLayoutView) {
@@ -76,6 +97,8 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder>{
 
             categoryName = (TextView) itemLayoutView.findViewById(R.id.snipName);
             chkSelected = (CheckBox) itemLayoutView.findViewById(R.id.checkSelected);
+            playButton = (ImageButton) itemLayoutView.findViewById(R.id.playImageButton);
+
         }
 
     }
