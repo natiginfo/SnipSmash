@@ -1,4 +1,4 @@
-package contafe.snipsmash;
+package contafe.snipsmash.models;
 
 import java.util.ArrayList;
 

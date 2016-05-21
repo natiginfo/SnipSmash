@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import contafe.snipsmash.R;
-import contafe.snipsmash.SnipObject;
+import contafe.snipsmash.models.SnipObject;
 import contafe.snipsmash.defaults.Constants;
 import contafe.snipsmash.defaults.TokenManager;
 import cz.msebera.android.httpclient.Header;
