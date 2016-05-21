@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -30,6 +32,8 @@ public class SnipListActivity extends AppCompatActivity {
     private RecyclerView snipView;
     private SnipsAdapter snipsAdapter;
 
+    private Button mergeButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,18 @@ public class SnipListActivity extends AppCompatActivity {
         snips = new ArrayList<>();
 
         getFavouriteSnipList();
+        mergeButton = (Button) findViewById(R.id.buttonMerge);
+        mergeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                merge();
+            }
+        });
+    }
+
+    private void merge() {
+
+        }
     }
 
     protected void getFavouriteSnipList() {
@@ -52,13 +68,13 @@ public class SnipListActivity extends AppCompatActivity {
                     for (int i = 0; i < favSnipList.length(); i++) {
                         JSONObject snipJSON = favSnipList.getJSONObject(i);
                         SnipObject snip = new SnipObject(
-                            snipJSON.getString("updated_at"),
-                            snipJSON.getJSONObject("snip").getString("waveform_raw_data"),
-                            snipJSON.getJSONObject("snip").getString("url_aac"),
-                            snipJSON.getJSONObject("snip").getString("slug"),
-                            snipJSON.getJSONObject("snip").getString("name"),
-                            snipJSON.getJSONObject("snip").getString("url"),
-                            snipJSON.getJSONObject("snip").getString("waveform_640x128")
+                                snipJSON.getString("updated_at"),
+                                snipJSON.getJSONObject("snip").getString("waveform_raw_data"),
+                                snipJSON.getJSONObject("snip").getString("url_aac"),
+                                snipJSON.getJSONObject("snip").getString("slug"),
+                                snipJSON.getJSONObject("snip").getString("name"),
+                                snipJSON.getJSONObject("snip").getString("url"),
+                                snipJSON.getJSONObject("snip").getString("waveform_640x128")
                         );
                         snips.add(snip);
                     }
@@ -83,11 +99,11 @@ public class SnipListActivity extends AppCompatActivity {
         headers[1] = new BasicHeader("Content-Type", "application/json");
 
         favSnipClient.get(
-            SnipListActivity.this,
-            Constants.API_URL + Constants.FAV_SNIPS,
-            headers,
-            new RequestParams(),
-            asyncHttpResponseHandler
+                SnipListActivity.this,
+                Constants.API_URL + Constants.FAV_SNIPS,
+                headers,
+                new RequestParams(),
+                asyncHttpResponseHandler
         );
 
     }
