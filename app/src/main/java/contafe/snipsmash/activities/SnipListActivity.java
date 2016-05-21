@@ -19,9 +19,6 @@ public class SnipListActivity extends AppCompatActivity {
 
     protected JSONObject getFavouriteSnipList() {
         JSONObject favSnipList = new JSONObject();
-
-
-
         return favSnipList;
     }
 
