@@ -36,9 +36,9 @@ public class MergedDubActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<String> urls = intent.getStringArrayListExtra("data");
         playButton = (ImageButton) findViewById(R.id.playMergedButton);
-        playButton.setImageResource(R.drawable.play);
+        playButton.setImageResource(R.drawable.playbig);
         saveButton = (ImageButton) findViewById(R.id.saveMergedButton);
-        saveButton.setImageResource(R.drawable.save);
+        saveButton.setImageResource(R.drawable.savebig);
         Handler handler = new Handler();
 
         outputDir = this.getApplicationContext().getCacheDir();
