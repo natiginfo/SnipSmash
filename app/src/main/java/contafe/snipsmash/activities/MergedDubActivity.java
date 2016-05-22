@@ -5,8 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -22,10 +21,8 @@ import contafe.snipsmash.R;
 import cz.msebera.android.httpclient.Header;
 
 public class MergedDubActivity extends AppCompatActivity {
-
-    private RecyclerView snipView;
-    private Button playButton;
-    private Button saveButton;
+    public ImageButton playButton;
+    public ImageButton saveButton;
 
     private String ffmpegBinary;
     private File outputDir;
@@ -36,12 +33,12 @@ public class MergedDubActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_merged_dub);
-        snipView = (RecyclerView) findViewById(R.id.recyclerView);
-        snipView.setHasFixedSize(true);
         Intent intent = getIntent();
         ArrayList<String> urls = intent.getStringArrayListExtra("data");
-        playButton = (Button) findViewById(R.id.playButton);
-        saveButton = (Button) findViewById(R.id.saveButton);
+        playButton = (ImageButton) findViewById(R.id.playMergedButton);
+        playButton.setImageResource(R.drawable.play);
+        saveButton = (ImageButton) findViewById(R.id.saveMergedButton);
+        saveButton.setImageResource(R.drawable.save);
         Handler handler = new Handler();
 
         outputDir = this.getApplicationContext().getCacheDir();

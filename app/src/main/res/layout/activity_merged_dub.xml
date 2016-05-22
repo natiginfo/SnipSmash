@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".activities.SnipListActivity">
+    tools:context=".activities.MergedDubActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,48 +16,26 @@
         android:layout_alignParentStart="true"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="7"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Snip List"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonMerge"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/playMergedButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Merge" />
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY" />
 
-            <Button
-                android:id="@+id/playButton"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/saveMergedButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Merge" />
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Merge" />
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
