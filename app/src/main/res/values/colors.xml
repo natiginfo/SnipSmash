@@ -5,6 +5,7 @@
 
     <color name="colorAccent">@color/colorPrimaryDark</color>
     <color name="white">#ffffff</color>
+    <color name="snipListGreen">#edfff5</color>
     <color name="colorText">#000000</color>
     <color name="eventCardBackground">#f7f7f7</color>
 
