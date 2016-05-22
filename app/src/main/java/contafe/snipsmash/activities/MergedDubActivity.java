@@ -99,15 +99,22 @@ public class MergedDubActivity extends AppCompatActivity {
         });
     }
 
-    private void createSnip() {
+    private void createSnip(String name) {
 
         TokenManager tokenManager = new TokenManager(MergedDubActivity.this);
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 
         StringEntity entity = null;
         try {
-            entity = new StringEntity("Hello");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", name);
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put("en_US");
+            jsonObject.put("cultural_selections", jsonArray);
+            entity = new StringEntity(jsonObject.toString());
         } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         Header[] headers = new Header[2];
