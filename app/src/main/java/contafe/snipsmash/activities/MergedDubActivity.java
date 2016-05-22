@@ -2,6 +2,7 @@ package contafe.snipsmash.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,10 @@ import android.widget.ImageButton;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import contafe.snipsmash.R;
 import cz.msebera.android.httpclient.Header;
@@ -39,126 +45,47 @@ public class MergedDubActivity extends AppCompatActivity {
         playButton.setImageResource(R.drawable.playbig);
         saveButton = (ImageButton) findViewById(R.id.saveMergedButton);
         saveButton.setImageResource(R.drawable.savebig);
-        Handler handler = new Handler();
-
-        outputDir = this.getApplicationContext().getCacheDir();
-        if (!outputDir.exists()) {
-            System.err.println("THE CACHE DIR DOESN'T EXIST!!!");
+        for (String url : urls) {
+            System.out.println("URL: " + url);
         }
 
-        counter = 0;
-        numUrls = urls.size();
-        installFFMpeg();
+        JSONArray jsonArray = new JSONArray(Arrays.asList(urls));
+        System.out.println(jsonArray.toString().substring(1, jsonArray.toString().length() - 1));
+        RequestParams params = new RequestParams();
+        params.add("data", jsonArray.toString().substring(1, jsonArray.toString().length() - 1));
 
-        final ArrayList<File> aacFiles = downloadUrls(urls);
-        final File[] outputFiles = new File[1];
-        handler.postDelayed(new Runnable() {
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.post("http://contafe.com/hack/mergeFiles.php", params, new FileAsyncHttpResponseHandler(this) {
             @Override
-            public void run() {
+            public void onStart() {
+                //start progressbar
+                System.out.println("STARTED");
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+                System.out.println("FAILURE");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, File file) {
+                System.out.println("SUCCESS" + file.getName() + " + " + file.getAbsolutePath());
+                MediaPlayer mp = new MediaPlayer();
                 try {
-                    outputFiles[0] = mergeWithFFMpeg(aacFiles);
-                } catch (MergeWithFFMpegException e) {
-                    System.err.println("We got a boo-boo!!! :( " + e.getMessage());
+                    mp.setDataSource(file.getAbsolutePath());
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }, 3000);
-
-        File outputFile = outputFiles[0];
-
-    }
-
-    private ArrayList<File> downloadUrls(ArrayList<String> urls) {
-        final ArrayList<File> outputFiles = new ArrayList<>();
-        for (String urlString : urls) {
-
-            AsyncHttpClient dlSnip = new AsyncHttpClient();
-            dlSnip.get(
-                urlString,
-                new AsyncHttpResponseHandler() {
+                mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        File outputFile = null;
-                        try {
-                            outputFile = File.createTempFile("soundFile", ".aac", outputDir);
-                            FileOutputStream output = new FileOutputStream(outputFile);
-                            output.write(responseBody);
-                            outputFiles.add(outputFile);
-                            counter++;
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        mediaPlayer.start();
                     }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        System.err.println("I'm so sad now: " + statusCode);
-                    }
-                }
-            );
-        }
-        return outputFiles;
-    }
-
-    private File mergeWithFFMpeg(ArrayList<File> aacFiles) throws MergeWithFFMpegException {
-        try {
-            File listOfFiles = File.createTempFile("inputFile", ".txt", outputDir);
-            FileOutputStream listOfFileOut = new FileOutputStream(listOfFiles);
-            for (File aacFile : aacFiles) {
-                listOfFileOut.write(aacFile.getAbsolutePath().getBytes());
+                });
+                mp.prepareAsync();
             }
-            File outputAacFile = File.createTempFile("merged", ".aac", outputDir);
-            String command = ffmpegBinary + " -f concat -i " + listOfFiles.getAbsolutePath() + " -c copy " + outputAacFile.getAbsolutePath();
-
-            ProcessBuilder pb = new ProcessBuilder(command);
-            pb.directory(outputDir);
-
-            Process proc = pb.start();
-
-            int exitVal = proc.waitFor();
-
-            System.out.println("Exit val is: " + String.valueOf(exitVal));
-
-            return outputAacFile;
-        } catch (IOException e) {
-            System.err.println("I'm sad: " + e.getMessage());
-            e.printStackTrace();
-            throw(new MergeWithFFMpegException());
-        } catch (InterruptedException e) {
-            System.err.println("I'm super sad: " + e.getMessage());
-            e.printStackTrace();
-            throw(new MergeWithFFMpegException());
-        }
-    }
-
-    private void installFFMpeg() {
-        Context ctx = this.getApplicationContext();
-        try {
-            File f = new File(outputDir.getAbsolutePath(), "ffmpeg");
-
-            final FileOutputStream out = new FileOutputStream(f);
-            final InputStream is = ctx.getResources().openRawResource(R.raw.ffmpeg);
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = is.read(buf)) > 0) {
-                System.out.println("Writing bufferssss!!!");
-                out.write(buf, 0, len);
-            }
-            ffmpegBinary = f.getAbsolutePath();
-            Runtime.getRuntime().exec("chmod 755 "+ffmpegBinary).waitFor();
-        } catch (FileNotFoundException e) {
-            System.err.println("OH MY GOD NOOOOO, WE CAN'T FIND THE FILE.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("OH MY GOD NOOOOO, WE Have an IOException.");
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            System.err.println("OH MY GOD NOOOOO, WE are interrupted.");
-            e.printStackTrace();
-        }
-    }
-
-    private class MergeWithFFMpegException extends Throwable {
+        });
     }
 }
