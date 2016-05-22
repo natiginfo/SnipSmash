@@ -41,8 +41,8 @@
                 android:id="@+id/playImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/play"
-                android:scaleType="centerInside" />
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY" />
 
             <CheckBox
                 android:id="@+id/checkSelected"

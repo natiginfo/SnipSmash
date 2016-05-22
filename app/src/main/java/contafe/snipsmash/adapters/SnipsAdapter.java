@@ -23,6 +23,7 @@ import contafe.snipsmash.models.SnipObject;
 public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder> {
     private List<SnipObject> snips;
     public MediaPlayer mp = new MediaPlayer();
+    public ImageButton currentPlaying;
 
     public SnipsAdapter(List<SnipObject> snips) {
         this.snips = snips;
@@ -42,31 +43,37 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder> 
             mp.stop();
             mp.release();
             mp = null;
+            if(currentPlaying != null){
+                currentPlaying.setImageResource(R.drawable.play);
+            }
         }
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 
         final int pos = position;
-
         viewHolder.categoryName.setText(snips.get(position).getName());
         viewHolder.chkSelected.setChecked(snips.get(position).isSelected());
         viewHolder.chkSelected.setTag(snips.get(position));
 
-        viewHolder.playButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.playPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopPlaying();
-                try {
-                    mp = new MediaPlayer();
-                    mp.setDataSource(getSnips().get(pos).getUrlAAC());
-                    mp.prepare();
-                    mp.start();
-                } catch (IOException e) {
-                    Toast.makeText(v.getContext(), "ERROR_WHILE_PLAYING:" + e, Toast.LENGTH_LONG);
+                // double clicking the same button should simply stop playing
+                if(currentPlaying != viewHolder.playPauseButton) {
+                    try {
+                        mp = new MediaPlayer();
+                        mp.setDataSource(getSnips().get(pos).getUrlAAC());
+                        mp.prepare();
+                        mp.start();
+                        viewHolder.playPauseButton.setImageResource(R.drawable.pause);
+                        currentPlaying = viewHolder.playPauseButton;
+                    } catch (IOException e) {
+                        Toast.makeText(v.getContext(), "ERROR_WHILE_PLAYING:" + e, Toast.LENGTH_LONG);
+                    }
                 }
-
             }
         });
 
@@ -95,7 +102,7 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder> 
 
         public TextView categoryName;
         public CheckBox chkSelected;
-        public ImageButton playButton;
+        public ImageButton playPauseButton;
         public SnipObject snip;
 
         public ViewHolder(View itemLayoutView) {
@@ -103,7 +110,8 @@ public class SnipsAdapter extends RecyclerView.Adapter<SnipsAdapter.ViewHolder> 
 
             categoryName = (TextView) itemLayoutView.findViewById(R.id.snipName);
             chkSelected = (CheckBox) itemLayoutView.findViewById(R.id.checkSelected);
-            playButton = (ImageButton) itemLayoutView.findViewById(R.id.playImageButton);
+            playPauseButton = (ImageButton) itemLayoutView.findViewById(R.id.playImageButton);
+            playPauseButton.setImageResource(R.drawable.play);
 
         }
 
