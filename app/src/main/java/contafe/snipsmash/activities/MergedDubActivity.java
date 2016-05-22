@@ -101,47 +101,50 @@ public class MergedDubActivity extends AppCompatActivity {
 
     private void createSnip() {
 
-//        TokenManager tokenManager = new TokenManager(MergedDubActivity.this);
-//        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-//        StringEntity entity = null;
-//        try {
-//            entity = new StringEntity("Hello");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//
-//        asyncHttpClient.post(MergedDubActivity.this, Constants.API_URL, entity, new AsyncHttpResponseHandler() {
-//                    @Override
-//                    public void onStart() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//
-//
-//                        String response = new String(responseBody);
-//
-//                        try {
-//                            JSONObject jsonResponse = new JSONObject(response);
-//                            if (!jsonResponse.has("error")) {
-//                                System.out.println("RESPONSE: " + jsonResponse.toString());
-//
-//                            } else {
-//                                Toast.makeText(MergedDubActivity.this, jsonResponse.getString("error_description"), Toast.LENGTH_LONG).show();
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//
-//                        Toast.makeText(MergedDubActivity.this, "Something went wrong. Please retry again.", Toast.LENGTH_SHORT).show();
-//                        String response = new String(responseBody);
-//                        System.out.println("ERROR RESPONSE: " + response);
-//                    }
-//                });
+        TokenManager tokenManager = new TokenManager(MergedDubActivity.this);
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+
+        StringEntity entity = null;
+        try {
+            entity = new StringEntity("Hello");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Header[] headers = new Header[2];
+        headers[0] = new BasicHeader("Authorization", "Bearer " + tokenManager.getAccessToken());
+        headers[1] = new BasicHeader("Content-Type", "application/json");
+        asyncHttpClient.post(MergedDubActivity.this, Constants.API_URL, headers, entity, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+
+                String response = new String(responseBody);
+
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    if (!jsonResponse.has("error")) {
+                        System.out.println("RESPONSE: " + jsonResponse.toString());
+
+                    } else {
+                        Toast.makeText(MergedDubActivity.this, jsonResponse.getString("error_description"), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                Toast.makeText(MergedDubActivity.this, "Something went wrong. Please retry again.", Toast.LENGTH_SHORT).show();
+                String response = new String(responseBody);
+                System.out.println("ERROR RESPONSE: " + response);
+            }
+        });
     }
 }
